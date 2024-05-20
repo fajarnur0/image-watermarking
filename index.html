@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Image Watermarking</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="shortcut icon" href="img/logo.png" type="image/x-icon">
+    <!-- Font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap"
+      rel="stylesheet"
+    />
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              clifford: "#da373d",
+              primary: "#00D084",
+              secondary: "#7BDCB5",
+              dark: "#1e293b",
+            },
+            fontFamily: {
+              inter: ["Inter", "sans-serif"],
+            },
+          },
+        },
+      };
+    </script>
+    <!-- Style -->
+    <style>
+      .indicator {
+        transition: left 0.4s;
+      }
+    </style>
+  </head>
+  <body class="text-dark font-inter">
+    <div class="container w-3/4 mx-auto mb-14">
+      <!-- Header -->
+      <div class="my-10">
+        <h1 class="text-primary font-bold text-3xl sm:text-5xl text-center mb-6">
+          <span class="text-dark">Welcome to Image</span> Watermarking
+        </h1>
+        <p class="text-center text-sm sm:text-base">
+          Ayo lindungi citra gambar anda dengan menambahkan watermark untuk
+          klaim hak cipta!
+        </p>
+      </div>
+      <div>
+        <!-- tab-list -->
+        <div
+          role="tablist"
+          aria-label="tabs"
+          class="relative w-max mx-auto h-12 bg-secondary grid grid-cols-2 items-center px-[3px] rounded-full overflow-hidden shadow-2xl transition"
+        >
+          <div
+            class="absolute indicator h-11 my-auto top-0 bottom-0 left-0 rounded-full bg-primary shadow-md w-32"
+          ></div>
+          <button
+            role="tab"
+            aria-selected="true"
+            aria-controls="panel-1"
+            id="tab-1"
+            tabindex="0"
+            class="relative block h-10 px-6 tab rounded-full"
+          >
+            <span class="text-white font-medium">Watermark</span>
+          </button>
+          <button
+            role="tab"
+            aria-selected="false"
+            aria-controls="panel-2"
+            id="tab-2"
+            tabindex="-1"
+            class="relative block h-10 px-6 tab rounded-full"
+          >
+            <span class="text-white font-medium">Extract</span>
+          </button>
+        </div>
+        <!-- tab-content -->
+        <div class="mt-6 relative">
+          <!-- watermark-tab -->
+          <div
+            role="tabpanel"
+            id="panel-1"
+            class="tab-panel px-8 py-10 transition duration-300 visible opacity-100 rounded-3xl bg-secondary bg-opacity-50 shadow-2xl"
+          >
+            <!-- Watermarking FORM -->
+            <form class="mb-7">
+              <!-- Original Image Input -->
+              <div class="mb-7 relative">
+                <label for="inputImage" class="font-bold block mb-2">
+                  Original Image
+                </label>
+                <input
+                  class="absolute w-full h-48 z-10 opacity-0 cursor-pointer"
+                  type="file"
+                  id="inputImage"
+                  accept="image/*"
+                />
+                <div
+                  id="inputImageDisplay"
+                  class="flex justify-center items-center w-full h-48 border-2 border-dashed border-primary rounded-lg bg-slate-50"
+                >
+                  <div class="text-center">
+                    <img
+                      class="mb-3 block mx-auto"
+                      src="img/image-icon.png"
+                      width="50"
+                      alt="icon"
+                    />
+                    <p class="font-semibold">
+                      Drag and drop or click here to upload image
+                    </p>
+                    <p class="font-light">Upload any images from device</p>
+                  </div>
+                </div>
+              </div>
+              <!-- Watermark Image Input -->
+              <div class="mb-7 relative">
+                <label for="inputWatermark" class="font-bold block mb-2">
+                  Watermark Image
+                </label>
+                <input
+                  class="absolute w-full h-48 z-10 opacity-0 cursor-pointer"
+                  type="file"
+                  id="inputWatermark"
+                  accept="image/*"
+                />
+                <div
+                  id="wmImageDisplay"
+                  class="flex justify-center items-center w-full h-48 border-2 border-dashed border-primary rounded-lg bg-slate-50"
+                >
+                  <div class="text-center">
+                    <img
+                      class="mb-3 block mx-auto"
+                      src="img/image-icon.png"
+                      width="50"
+                      alt="icon"
+                    />
+                    <p class="font-semibold">
+                      Drag and drop or click here to upload image
+                    </p>
+                    <p class="font-light">Upload any images from device</p>
+                  </div>
+                </div>
+              </div>
+
+              <!-- BUTTON -->
+              <button
+                type="button"
+                onclick="embedWatermark()"
+                id="embedButton"
+                class="w-full bg-primary py-3 rounded-full text-white text-lg font-bold tracking-widest hover:bg-opacity-60 transition duration-500"
+              >
+                Embed
+              </button>
+            </form>
+
+            <!-- OUTPUT IMAGE WATERMARKED -->
+            <div
+              class="w-full min-h-72 border-2 border-dashed border-primary rounded-lg text-center"
+            >
+              <span 
+                >Image output will be shown here. Click image to download</span
+              >
+              <!-- <canvas id="canvas" style="display: none"></canvas> -->
+              <button id="downloadButton" onclick="downloadImage()" class="mx-auto">
+                <img id="outputImage" class="w-full"/>
+              </button>
+            </div>
+          </div>
+
+          <!-- Extract-tab -->
+          <div
+            role="tabpanel"
+            id="panel-2"
+            class="absolute top-0 invisible opacity-0 tab-panel px-8 py-10 transition duration-300 w-full rounded-3xl bg-secondary bg-opacity-50 shadow-2xl"
+          >
+            <form class="mb-7">
+              <!-- Watermarked Image Input -->
+              <div class="mb-7 relative">
+                <label for="watermarkedImage" class="font-bold block mb-2">
+                  Watermarked Image
+                </label>
+
+                <input
+                  class="absolute w-full h-48 z-10 opacity-0 cursor-pointer"
+                  type="file"
+                  id="watermarkedImage"
+                  name="watermarkedImage"
+                  accept="image/*"
+                />
+                <div id="watermarkedDisplay" class="flex justify-center items-center w-full h-48 border-2 border-dashed border-primary rounded-lg bg-slate-50">
+                  <div class="text-center">
+                    <img
+                      class="mb-3 block mx-auto"
+                      src="img/image-icon.png"
+                      width="50"
+                      alt="icon"
+                    />
+                    <p class="font-semibold">
+                      Drag and drop or click here to upload image
+                    </p>
+                    <p class="font-light">Upload any images from device</p>
+                  </div>
+                </div>
+              </div>
+              <!-- BUTTON -->
+              <button
+                type="button"
+                onclick="extractWatermark()"
+                id="extractButton"
+                class="w-full bg-primary py-3 rounded-full text-white text-lg font-bold tracking-widest hover:bg-opacity-60 transition duration-500"
+              >
+                Extract
+              </button>
+            </form>
+
+            <!-- OUTPUT EXTRACT IMAGE -->
+            <div
+              class="w-full min-h-72 border-2 border-dashed border-primary rounded-lg text-center"
+            >
+              <span
+                >Image output will be shown here. Click image to download</span
+              >
+              <!-- <canvas id="extractCanvas" style="display: none"></canvas> -->
+              <button id="extractDownloadLink" onclick="downloadExtractImg()" class="mx-auto">
+                <img id="extractOutputImage" class="w-full"/>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Javascript -->
+    <script src="script.js"></script>
+  </body>
+</html>
